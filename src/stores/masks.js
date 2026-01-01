@@ -35,11 +35,17 @@ export const useMasksStore = defineStore('masks', () => {
   // Initialize
   const init = async () => {
     try {
-      await signInAnonymously(masksAuth)
+      // Try anonymous auth, but continue even if it fails
+      try {
+        await signInAnonymously(masksAuth)
+      } catch (authError) {
+        console.warn('Anonymous auth not enabled, continuing without auth:', authError.code)
+      }
+      
       isConnected.value = true
       setupListeners()
     } catch (error) {
-      console.error('Masks auth error:', error)
+      console.error('Masks init error:', error)
       toast.error('Ошибка подключения к базе масок')
       isConnected.value = false
     }

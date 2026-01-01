@@ -49,11 +49,17 @@ export const useSpoolsStore = defineStore('spools', () => {
   // Initialize
   const init = async () => {
     try {
-      await signInAnonymously(spoolsAuth)
+      // Try anonymous auth, but continue even if it fails
+      try {
+        await signInAnonymously(spoolsAuth)
+      } catch (authError) {
+        console.warn('Anonymous auth not enabled, continuing without auth:', authError.code)
+      }
+      
       isConnected.value = true
       setupListeners()
     } catch (error) {
-      console.error('Spools auth error:', error)
+      console.error('Spools init error:', error)
       toast.error('Ошибка подключения к базе катушек')
       isConnected.value = false
     }
