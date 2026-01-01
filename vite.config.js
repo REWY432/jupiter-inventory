@@ -31,10 +31,11 @@ export default defineConfig({
     minify: 'terser',
     terserOptions: {
       compress: {
-        drop_console: true,
+        drop_console: false, // Keep console logs for debugging
         drop_debugger: true
       }
     },
+    copyPublicDir: true, // Ensure public files are copied
     rollupOptions: {
       output: {
         manualChunks: {

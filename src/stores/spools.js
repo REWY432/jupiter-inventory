@@ -52,8 +52,10 @@ export const useSpoolsStore = defineStore('spools', () => {
       // Try anonymous auth, but continue even if it fails
       try {
         await signInAnonymously(spoolsAuth)
+        console.log('Spools: Anonymous auth successful')
       } catch (authError) {
-        console.warn('Anonymous auth not enabled, continuing without auth:', authError.code)
+        // Silently continue without auth - Firestore rules should allow access
+        console.log('Spools: Continuing without auth (this is normal if auth is not configured)')
       }
       
       isConnected.value = true
