@@ -135,11 +135,6 @@
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">{{ mask.month }}.{{ mask.year }}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                   <div class="flex items-center justify-end gap-2">
-                    <button @click="addToShipment(mask)" class="text-green-600 hover:text-green-900" title="Добавить в буфер отгрузки">
-                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                      </svg>
-                    </button>
                     <button @click="openEdit(mask)" class="text-primary-600 hover:text-primary-900" title="Редактировать">
                       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -247,7 +242,6 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useMasksStore } from '@/stores/masks'
-import { useShipmentsStore } from '@/stores/shipments'
 import { useToastStore } from '@/stores/toast'
 import { useKeyboard } from '@/composables/useKeyboard'
 import { useDebounce } from '@/composables/useDebounce'
@@ -261,7 +255,6 @@ import BulkAddModal from '@/components/masks/BulkAddModal.vue'
 import { printMaskLabel } from '@/utils/print'
 
 const masksStore = useMasksStore()
-const shipmentsStore = useShipmentsStore()
 const toast = useToastStore()
 
 const searchQuery = ref('')
@@ -410,21 +403,12 @@ const openContextMenu = (event, mask) => {
   }
 }
 
-const addToShipment = (mask) => {
-  shipmentsStore.addToBuffer({ ...mask, type: 'mask' })
-}
-
 const contextMenuItems = computed(() => {
   if (!contextMenu.value.mask) return []
   
   const mask = contextMenu.value.mask
   
   return [
-    {
-      label: 'Добавить в буфер отгрузки',
-      action: () => addToShipment(mask)
-    },
-    { divider: true },
     {
       label: 'Редактировать',
       action: () => openEdit(mask)

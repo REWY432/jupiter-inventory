@@ -20,6 +20,12 @@ const router = createRouter({
       name: 'spools',
       component: () => import('@/views/SpoolsView.vue'),
       meta: { title: 'Катушки' }
+    },
+    {
+      path: '/shipments',
+      name: 'shipments',
+      component: () => import('@/views/ShipmentsView.vue'),
+      meta: { title: 'Отгрузки' }
     }
   ]
 })
