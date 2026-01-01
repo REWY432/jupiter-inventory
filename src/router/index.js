@@ -5,7 +5,9 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      redirect: '/masks'
+      name: 'dashboard',
+      component: () => import('@/views/DashboardView.vue'),
+      meta: { title: 'Дашборд' }
     },
     {
       path: '/masks',

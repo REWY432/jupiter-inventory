@@ -23,3 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 
+# Old backup files
+*.old.vue
+
