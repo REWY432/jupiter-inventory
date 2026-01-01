@@ -11,8 +11,7 @@ import {
   serverTimestamp,
   setDoc
 } from 'firebase/firestore'
-import { signInAnonymously } from 'firebase/auth'
-import { spoolsDb, spoolsAuth } from '@/config/firebase'
+import { spoolsDb } from '@/config/firebase'
 import { useToastStore } from './toast'
 
 export const useSpoolsStore = defineStore('spools', () => {
@@ -49,21 +48,15 @@ export const useSpoolsStore = defineStore('spools', () => {
   // Initialize
   const init = async () => {
     try {
-      // Try anonymous auth, but continue even if it fails
-      try {
-        await signInAnonymously(spoolsAuth)
-        console.log('Spools: Anonymous auth successful')
-      } catch (authError) {
-        // Silently continue without auth - Firestore rules should allow access
-        console.log('Spools: Continuing without auth (this is normal if auth is not configured)')
-      }
-      
+      // No auth needed - Firestore rules allow access
+      console.log('Spools: Initializing without authentication')
       isConnected.value = true
       setupListeners()
     } catch (error) {
       console.error('Spools init error:', error)
       toast.error('Ошибка подключения к базе катушек')
       isConnected.value = false
+      isLoading.value = false
     }
   }
 

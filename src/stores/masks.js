@@ -10,8 +10,7 @@ import {
   query,
   serverTimestamp 
 } from 'firebase/firestore'
-import { signInAnonymously } from 'firebase/auth'
-import { masksDb, masksAuth } from '@/config/firebase'
+import { masksDb } from '@/config/firebase'
 import { useToastStore } from './toast'
 
 export const useMasksStore = defineStore('masks', () => {
@@ -35,21 +34,15 @@ export const useMasksStore = defineStore('masks', () => {
   // Initialize
   const init = async () => {
     try {
-      // Try anonymous auth, but continue even if it fails
-      try {
-        await signInAnonymously(masksAuth)
-        console.log('Masks: Anonymous auth successful')
-      } catch (authError) {
-        // Silently continue without auth - Firestore rules should allow access
-        console.log('Masks: Continuing without auth (this is normal if auth is not configured)')
-      }
-      
+      // No auth needed - Firestore rules allow access
+      console.log('Masks: Initializing without authentication')
       isConnected.value = true
       setupListeners()
     } catch (error) {
       console.error('Masks init error:', error)
       toast.error('Ошибка подключения к базе масок')
       isConnected.value = false
+      isLoading.value = false
     }
   }
 

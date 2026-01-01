@@ -111,6 +111,21 @@ export const useShipmentsStore = defineStore('shipments', () => {
     localStorage.setItem('shipmentBuffer', JSON.stringify(buffer.value))
   }
 
+  // Helper to remove undefined values
+  const cleanData = (obj) => {
+    const cleaned = {}
+    for (const key in obj) {
+      if (obj[key] !== undefined && obj[key] !== null) {
+        if (typeof obj[key] === 'object' && !Array.isArray(obj[key]) && obj[key].constructor === Object) {
+          cleaned[key] = cleanData(obj[key])
+        } else {
+          cleaned[key] = obj[key]
+        }
+      }
+    }
+    return cleaned
+  }
+
   // Shipment CRUD
   const createShipment = async (shipmentData) => {
     try {
@@ -119,21 +134,27 @@ export const useShipmentsStore = defineStore('shipments', () => {
         return
       }
 
-      const data = {
-        ...shipmentData,
-        items: buffer.value.map(item => ({
-          id: item.id,
-          type: item.type,
-          serial: item.serial,
-          model: item.model || item.wireType,
-          size: item.size,
-          details: item
+      const data = cleanData({
+        customerName: shipmentData.customerName || '',
+        contactPhone: shipmentData.contactPhone || '',
+        contactEmail: shipmentData.contactEmail || '',
+        shippingAddress: shipmentData.shippingAddress || '',
+        shippingDate: shipmentData.shippingDate || new Date().toISOString().split('T')[0],
+        notes: shipmentData.notes || '',
+        items: buffer.value.map(item => cleanData({
+          id: item.id || '',
+          type: item.type || '',
+          serial: item.serial || '',
+          model: item.model || item.wireType || '',
+          size: item.size || '',
+          generation: item.generation || '',
+          wireType: item.wireType || ''
         })),
         status: STATUSES.PENDING,
         itemsCount: buffer.value.length,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp()
-      }
+      })
 
       await addDoc(collection(masksDb, 'shipments'), data)
       
