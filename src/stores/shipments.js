@@ -6,11 +6,8 @@ import {
   updateDoc, 
   deleteDoc, 
   doc, 
-  onSnapshot, 
-  query,
-  serverTimestamp,
-  where,
-  orderBy
+  onSnapshot,
+  serverTimestamp
 } from 'firebase/firestore'
 import { masksDb } from '@/config/firebase'
 import { useToastStore } from './toast'
@@ -55,16 +52,18 @@ export const useShipmentsStore = defineStore('shipments', () => {
       }
 
       // Setup listener for shipments
-      const shipmentsQuery = query(
-        collection(masksDb, 'shipments'),
-        orderBy('createdAt', 'desc')
-      )
+      const shipmentsQuery = collection(masksDb, 'shipments')
       
       unsubscribe = onSnapshot(shipmentsQuery, (snapshot) => {
         shipments.value = snapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data()
-        }))
+        })).sort((a, b) => {
+          // Sort by createdAt desc (newest first)
+          const aTime = a.createdAt?.toMillis?.() || 0
+          const bTime = b.createdAt?.toMillis?.() || 0
+          return bTime - aTime
+        })
         isLoading.value = false
       }, (error) => {
         console.error('Shipments listener error:', error)

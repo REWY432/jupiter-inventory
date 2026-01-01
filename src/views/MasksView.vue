@@ -283,6 +283,7 @@ const contextMenu = ref({ visible: false, x: 0, y: 0, mask: null })
 
 onMounted(() => {
   masksStore.init()
+  shipmentsStore.init()
 })
 
 // Keyboard shortcuts

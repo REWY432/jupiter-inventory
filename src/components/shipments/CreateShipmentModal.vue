@@ -111,6 +111,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useShipmentsStore } from '@/stores/shipments'
+import { useToastStore } from '@/stores/toast'
 import { useValidation } from '@/composables/useValidation'
 import BaseModal from '@/components/common/BaseModal.vue'
 
@@ -121,6 +122,7 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue', 'success'])
 
 const shipmentsStore = useShipmentsStore()
+const toast = useToastStore()
 const { errors, rules, validateField: validateFieldFn, validateForm, clearErrors } = useValidation()
 
 const isOpen = computed({
@@ -152,6 +154,12 @@ const hasErrors = computed(() => Object.keys(errors.value).length > 0)
 
 const handleSubmit = async () => {
   if (!validateForm(formData.value, validationSchema)) {
+    toast.error('Заполните все обязательные поля')
+    return
+  }
+
+  if (shipmentsStore.bufferCount === 0) {
+    toast.error('Добавьте товары в буфер отгрузки')
     return
   }
 
@@ -163,6 +171,7 @@ const handleSubmit = async () => {
     handleClose()
   } catch (error) {
     console.error('Error creating shipment:', error)
+    toast.error('Ошибка создания отгрузки: ' + (error.message || 'Неизвестная ошибка'))
   } finally {
     isSubmitting.value = false
   }

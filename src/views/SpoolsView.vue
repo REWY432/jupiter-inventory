@@ -226,6 +226,7 @@ const monthNames = ['Январь', 'Февраль', 'Март', 'Апрель'
 
 onMounted(() => {
   spoolsStore.init()
+  shipmentsStore.init()
 })
 
 useKeyboard({
