@@ -55,15 +55,21 @@ export const useShipmentsStore = defineStore('shipments', () => {
       const shipmentsQuery = collection(masksDb, 'shipments')
       
       unsubscribe = onSnapshot(shipmentsQuery, (snapshot) => {
-        shipments.value = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        })).sort((a, b) => {
+        console.log('Shipments snapshot received:', snapshot.docs.length, 'documents')
+        shipments.value = snapshot.docs.map(doc => {
+          const data = doc.data()
+          console.log('Shipment document:', doc.id, data)
+          return {
+            id: doc.id,
+            ...data
+          }
+        }).sort((a, b) => {
           // Sort by createdAt desc (newest first)
           const aTime = a.createdAt?.toMillis?.() || 0
           const bTime = b.createdAt?.toMillis?.() || 0
           return bTime - aTime
         })
+        console.log('Shipments loaded:', shipments.value.length, shipments.value)
         isLoading.value = false
       }, (error) => {
         console.error('Shipments listener error:', error)
